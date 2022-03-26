@@ -7,9 +7,13 @@ export enum LocationTypeEnum {
   POINT = 'Point'
 }
 
-export type LocationPointType = {
-  type: LocationTypeEnum.POINT,
+export type LocationType = {
+  type?: LocationTypeEnum,
   coordinates: number[],
+}
+
+export enum AlertStatusEnum {
+  ACTIVE = 'Active',
 }
 
 export type AlertType = {
@@ -19,11 +23,12 @@ export type AlertType = {
     name: string,
     birthDate: Date,
     disappearDate: Date,
-      isPcd?: boolean,
+    isPcd?: boolean,
   },
   additionalInfo?: string,
-  location: LocationPointType,
+  location: LocationType,
   account: string,
+  status?: AlertStatusEnum,
   createdAt?: Date,
   updatedAt?: Date,
 }

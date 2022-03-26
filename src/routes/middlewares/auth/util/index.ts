@@ -1,7 +1,5 @@
-import { compareSync, genSaltSync, hashSync } from 'bcrypt';
 import type { Response } from 'express';
 import type { Request } from 'express-validator/src/base';
-import ValidationError from 'src/util/error/validation-error';
 
 /**
  * Clear cookie
@@ -41,45 +39,4 @@ export function getHeader (key: string, request: Request): string | boolean | un
   const header = request.headers && request.headers[key];
 
   return header;
-}
-
-/**
- * Generate a new token id
- *
- * @param {string} accountId - User account id
- * @returns a bcrypt hash string
- */
-export function generateTokenId (accountId: string): string {
-  const {
-    SECRET_TOKEN_HASH,
-  } = process.env;
-
-  if (!SECRET_TOKEN_HASH) {
-    throw new ValidationError('INTERNAL_ERROR_INVALID_ENV');
-  }
-
-  const token = hashSync(`${accountId.substring(1, 4)}${SECRET_TOKEN_HASH}`, genSaltSync(10));
-
-  return token;
-}
-
-/**
- * Validate token (hash) id
- *
- * @param {string} id - Token Id (Hash)
- * @param {string} accountId - User account id
- * @returns boolean true if is a valid token id
- */
-export function tokenIdIsValid (id: string, accountId: string): boolean {
-  const {
-    SECRET_TOKEN_HASH,
-  } = process.env;
-
-  if (!SECRET_TOKEN_HASH) {
-    throw new ValidationError('INTERNAL_ERROR_INVALID_ENV');
-  }
-
-  const isValid = compareSync(`${accountId.substring(1, 4)}${SECRET_TOKEN_HASH}`, id as string);
-
-  return isValid;
 }

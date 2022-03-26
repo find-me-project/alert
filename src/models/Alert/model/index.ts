@@ -1,8 +1,12 @@
 import { uuidValidateV4 } from 'src/util/uuid';
 import ValidationError from 'src/util/error/validation-error';
-import { differenceInYears, isFuture, isValid } from 'date-fns';
+import {
+  differenceInYears, isFuture, isValid, isAfter,
+} from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
-import { AlertType, AlertTypeEnum, LocationTypeEnum } from '..';
+import {
+  AlertStatusEnum, AlertType, AlertTypeEnum, LocationTypeEnum,
+} from '..';
 
 export default function makeAlert (alert: AlertType): Readonly<AlertType> {
   if (alert._id && !uuidValidateV4(alert._id)) {
@@ -68,6 +72,10 @@ export default function makeAlert (alert: AlertType): Readonly<AlertType> {
     throw new ValidationError('DISAPPEAR_DATE_INVALID');
   }
 
+  if (isAfter(alert.data.birthDate, alert.data.disappearDate)) {
+    throw new ValidationError('DISAPPEAR_DATE_INVALID');
+  }
+
   if (alert.additionalInfo && alert.additionalInfo.length > 300) {
     throw new ValidationError('ADDITIONAL_INFO_MAX_LENGTH', { value: 300 });
   }
@@ -104,5 +112,6 @@ export default function makeAlert (alert: AlertType): Readonly<AlertType> {
       coordinates: alert.location.coordinates,
     },
     account: alert.account,
+    status: AlertStatusEnum.ACTIVE,
   });
 }

@@ -1,11 +1,13 @@
 import { model, Schema } from 'mongoose';
-import { AlertTypeEnum, LocationPointType, LocationTypeEnum } from '..';
+import {
+  AlertType,
+} from '..';
 
 export const ALERT = 'Alert';
 
 const schema = new Schema({
   _id: String,
-  type: AlertTypeEnum,
+  type: String,
   data: {
     name: String,
     birthDate: Date,
@@ -14,12 +16,17 @@ const schema = new Schema({
   },
   additionalInfo: String,
   location: {
-    type: LocationTypeEnum.POINT,
+    type: {
+      type: String,
+    },
     coordinates: [Number],
   },
-  account: { type: String, ref: 'Account' },
+  account: { type: String, ref: 'Account', index: true },
+  status: String,
 }, {
   timestamps: true,
 });
 
-export const AlertModel = model<LocationPointType>(ALERT, schema);
+schema.index({ location: '2dsphere' });
+
+export const AlertModel = model<AlertType>(ALERT, schema);

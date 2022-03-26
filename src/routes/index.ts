@@ -1,5 +1,5 @@
-import type { Request, Response } from 'express';
 import { Router } from 'express';
+import Alert from 'src/controllers/Alert';
 import init from 'src/util/router';
 import { auth } from './middlewares';
 import makeExpressCallback from './util/make-express-callback';
@@ -8,6 +8,17 @@ const routes = Router();
 
 init(routes);
 
-routes.get('/', (_request: Request, response: Response) => response.json({ message: 'Hello there' }));
+routes.post(
+  '/alert',
+  auth.isAuthenticated,
+  Alert.create.validation,
+  makeExpressCallback(Alert.create.method),
+);
+
+routes.get(
+  '/alerts',
+  Alert.getNearbyAlerts.validation,
+  makeExpressCallback(Alert.getNearbyAlerts.method),
+);
 
 export default routes;
