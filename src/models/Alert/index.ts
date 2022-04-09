@@ -1,10 +1,10 @@
 export enum AlertTypeEnum {
-  PERSON = 'Person',
-  PET = 'Pet'
+  person = 'Person',
+  pet = 'Pet'
 }
 
 export enum LocationTypeEnum {
-  POINT = 'Point'
+  point = 'Point'
 }
 
 export type LocationType = {
@@ -13,7 +13,7 @@ export type LocationType = {
 }
 
 export enum AlertStatusEnum {
-  ACTIVE = 'Active',
+  active = 'Active',
 }
 
 export type AlertType = {

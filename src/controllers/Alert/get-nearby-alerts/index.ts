@@ -7,10 +7,14 @@ async function method (request: Request, response: Response, session?: ClientSes
   const {
     latitude,
     longitude,
+    type,
   } = request.query;
 
   const service = new AlertService(session);
-  const result = await service.getNearbyAlerts([longitude as unknown as number, latitude as unknown as number]);
+  const result = await service.getNearbyAlerts(
+    [latitude as unknown as number, longitude as unknown as number],
+    type as string,
+  );
 
   return response.success({
     list: result,

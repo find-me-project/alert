@@ -19,26 +19,38 @@ export class AlertRepository implements IAlertRepository {
     return item;
   }
 
-  static async countActiveAlerts (accountId: string): Promise<number> {
+  static async countActiveAlerts (accountId: string, type: string): Promise<number> {
     const result = await AlertModel.countDocuments({
       account: accountId,
-      status: AlertStatusEnum.ACTIVE,
+      status: AlertStatusEnum.active,
+      type: type,
     });
 
     return result;
   }
 
-  async getNearbyAlerts (coordinates: number[]): Promise<AlertType[] | null> {
-    const result = await AlertModel.find(
-      {
-        location: {
-          $near: {
-            $geometry: { type: LocationTypeEnum.POINT, coordinates: coordinates },
-            $minDistance: 0,
-            $maxDistance: 5000,
-          },
+  async getNearbyAlerts (coordinates: number[], type?: string): Promise<AlertType[] | null> {
+    let filter: Record<string, any> = {
+      location: {
+        $near: {
+          $geometry: { type: LocationTypeEnum.point, coordinates: coordinates },
+          $minDistance: 0,
+          $maxDistance: 5000,
         },
       },
+    };
+
+    if (type) {
+      filter = {
+        ...filter,
+        type: {
+          $eq: type,
+        },
+      };
+    }
+
+    const result = await AlertModel.find(
+      filter,
       undefined,
       {
         session: this.session,

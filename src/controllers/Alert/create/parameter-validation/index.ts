@@ -26,10 +26,12 @@ export default [
     .toDate()
     .withMessage(getMessage('DISAPPEAR_DATE_INVALID')),
   body('isPcd')
+    .optional()
     .isBoolean()
     .withMessage(getMessage('IS_PCD_INVALID'))
     .toBoolean(),
   body('additionalInfo')
+    .optional()
     .isString()
     .withMessage(getMessage('ADDITIONAL_INFO_INVALID'))
     .escape(),

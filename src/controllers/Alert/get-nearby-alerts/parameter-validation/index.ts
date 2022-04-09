@@ -24,4 +24,10 @@ export default [
     })
     .withMessage(getMessage('LONGITUDE_INVALID'))
     .toFloat(),
+  query('type')
+    .optional()
+    .isString()
+    .withMessage(getMessage('TYPE_INVALID'))
+    .trim()
+    .escape(),
 ];

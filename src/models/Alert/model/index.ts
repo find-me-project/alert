@@ -108,10 +108,10 @@ export default function makeAlert (alert: AlertType): Readonly<AlertType> {
     data: alert.data,
     additionalInfo: alert.additionalInfo,
     location: {
-      type: LocationTypeEnum.POINT,
+      type: LocationTypeEnum.point,
       coordinates: alert.location.coordinates,
     },
     account: alert.account,
-    status: AlertStatusEnum.ACTIVE,
+    status: AlertStatusEnum.active,
   });
 }

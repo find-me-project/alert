@@ -1,6 +1,6 @@
 import IAlertRepository from 'src/repositories/Alert';
 import { ClientSession } from 'mongoose';
-import { AlertType } from 'src/models/Alert';
+import { AlertType, AlertTypeEnum } from 'src/models/Alert';
 import makeAlert from 'src/models/Alert/model';
 import ValidationError from 'src/util/error/validation-error';
 import { AlertRepository } from '../../repositories';
@@ -13,9 +13,11 @@ export class AlertService {
   }
 
   static async canCreate (data: AlertType): Promise<boolean> {
-    const count = await AlertRepository.countActiveAlerts(data.account);
+    const count = await AlertRepository.countActiveAlerts(data.account, data.type);
 
-    if (count > 3) {
+    if (data.type === AlertTypeEnum.person && count > 3) {
+      throw new ValidationError('MAX_ACCOUNT_ALERTS');
+    } else if (data.type === AlertTypeEnum.pet && count > 5) {
       throw new ValidationError('MAX_ACCOUNT_ALERTS');
     }
 
@@ -31,15 +33,19 @@ export class AlertService {
     return result;
   }
 
-  async getNearbyAlerts (coordinates: number[]): Promise<AlertType[] | null> {
-    const longitude = coordinates[0];
-    const latitude = coordinates[1];
+  async getNearbyAlerts (coordinates: number[], type?: string): Promise<AlertType[] | null> {
+    const latitude = coordinates[0];
+    const longitude = coordinates[1];
 
     if (longitude > 180 || longitude < -180 || latitude > 90 || latitude < -90) {
       throw new ValidationError('LOCATION_INVALID');
     }
 
-    const result = await this.repository.getNearbyAlerts(coordinates);
+    if (type && !(Object.values(AlertTypeEnum).includes(type as AlertTypeEnum))) {
+      throw new ValidationError('TYPE_INVALID');
+    }
+
+    const result = await this.repository.getNearbyAlerts(coordinates, type);
 
     return result;
   }
